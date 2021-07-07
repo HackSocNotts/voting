@@ -26,8 +26,6 @@ func main() {
 		log.Fatal("could not connect to the database.", err)
 	}
 
-	verify(20176069)
-
 	r := mux.NewRouter()
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
 	r.Path("/register/").Methods("POST").HandlerFunc(registerHandler)
@@ -44,6 +42,7 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("error reading /register req. body:", err)
 		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintln(w, "An unexpected error occurred")
 		return
 	}
 
@@ -51,10 +50,25 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("error parsing given id:", string(body))
 		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintln(w, "Invalid ID format")
 		return
 	}
 
 	log.Println("registering user", id)
+	exists, err := verify(int(id))
+	if err != nil {
+		log.Printf("user %d: couldn't verify user against the database\n", id)
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintln(w, "There was a database error, please try again.")
+		return
+	}
+
+	if !exists {
+		log.Printf("user %d attempted to register but isn't in HackSoc\n", id)
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintln(w, "You don't appear to be a member of HackSoc. Are you sure you entered your ID correctly?")
+		return
+	}
 }
 
 func connect() (*mongo.Client, error) {
@@ -85,4 +99,8 @@ func verify(id int) (bool, error) {
 	)
 
 	return n > 0, err
+}
+
+func hasVoted(id int) (bool, error) {
+
 }
