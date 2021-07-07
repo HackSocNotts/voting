@@ -1,15 +1,33 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/gorilla/mux"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+var db *mongo.Client
+
 func main() {
+	var err error
+
+	db, err = connect()
+	if err != nil {
+		log.Fatal("could not connect to the database.", err)
+	}
+
+	verify(20176069)
+
 	r := mux.NewRouter()
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
 	r.Path("/register/").Methods("POST").HandlerFunc(registerHandler)
@@ -37,4 +55,34 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Println("registering user", id)
+}
+
+func connect() (*mongo.Client, error) {
+	var (
+		username = os.Getenv("MONGO_USER")
+		password = os.Getenv("MONGO_PASS")
+	)
+
+	opts := options.Client().ApplyURI(fmt.Sprintf("mongodb+srv://%s:%s@cluster0.q5uor.mongodb.net/hacksoc?retryWrites=true&w=majority", username, password))
+
+	log.Println("connecting to mongodb database...")
+	client, err := mongo.Connect(context.TODO(), opts)
+	if err != nil {
+		return nil, err
+	}
+	log.Println("connected to database")
+
+	err = client.Ping(context.TODO(), nil)
+
+	return client, err
+}
+
+func verify(id int) (bool, error) {
+	var (
+		filter     = bson.D{{"ID", id}}
+		collection = db.Database("Hacksoc").Collection("members")
+		n, err     = collection.CountDocuments(context.TODO(), filter)
+	)
+
+	return n > 0, err
 }

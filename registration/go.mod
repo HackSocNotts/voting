@@ -2,4 +2,7 @@ module hacksocnotts.co.uk/voting/registration
 
 go 1.15
 
-require github.com/gorilla/mux v1.8.0
+require (
+	github.com/gorilla/mux v1.8.0
+	go.mongodb.org/mongo-driver v1.5.4
+)
