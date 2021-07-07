@@ -7,12 +7,16 @@ function register() {
         req.onreadystatechange = function() {
             if (this.readyState != 4) return
 
-            console.log(this.status, req.responseText)
+            if (this.status == 200) {
+                document.getElementById("error").innerHTML = ""
+            } else {
+                document.getElementById("error").innerHTML = req.responseText
+            }
         }
 
         req.open("POST", "/register/")
         req.send(id)
     } else {
-        console.error("invalid id", id)
+        document.getElementById("error").innerHTML = "Invalid student ID"
     }
 }

@@ -40,7 +40,7 @@ div.form button {
     width: 200px;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 40px;
+    margin-top: 10px;
     font-size: 20pt;
     padding: 10px;
     background-color: #00953b;
@@ -53,4 +53,10 @@ div.form button {
 
 div.form button:active {
     background-color: #008033;
+}
+
+div.form div#error {
+    color: rgb(204, 32, 32);
+    font-size: 16pt;
+    padding: 10px;
 }
