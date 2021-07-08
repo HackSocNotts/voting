@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -14,7 +13,6 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/google/uuid"
 )
@@ -24,7 +22,7 @@ var db *mongo.Client
 func main() {
 	var err error
 
-	db, err = connect()
+	db, err = common.Connect()
 	if err != nil {
 		log.Fatal("could not connect to the database.", err)
 	}
@@ -97,26 +95,6 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Printf("registered user %d, ballot id %s\n", id, ballotID)
-}
-
-func connect() (*mongo.Client, error) {
-	var (
-		username = os.Getenv("MONGO_USER")
-		password = os.Getenv("MONGO_PASS")
-	)
-
-	opts := options.Client().ApplyURI(fmt.Sprintf("mongodb+srv://%s:%s@cluster0.q5uor.mongodb.net/hacksoc?retryWrites=true&w=majority", username, password))
-
-	log.Println("connecting to mongodb database...")
-	client, err := mongo.Connect(context.TODO(), opts)
-	if err != nil {
-		return nil, err
-	}
-	log.Println("connected to database")
-
-	err = client.Ping(context.TODO(), nil)
-
-	return client, err
 }
 
 func verify(id int) (bool, error) {
