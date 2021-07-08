@@ -78,3 +78,51 @@ div.form div#message {
     visibility: hidden;
     display: none !important;
 }
+
+ul.choices {
+    list-style: none;
+    padding-left: 10px;
+}
+
+li.choice {
+    border: 1px solid #ddd;
+    border-bottom: none;
+    cursor: pointer;
+}
+
+li.choice.ron {
+    background-color: rgb(255, 244, 244);
+}
+
+li.choice:hover {
+    background-color: #eee;
+}
+
+li.choice:active {
+    background-color: #e6e6e6;
+}
+
+li.choice:first-child {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+li.choice:last-child {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom: 1px solid #ddd;
+}
+
+span.rank {
+    color: #008033;
+    padding: 10px;
+    border-right: 1px solid #ddd;
+    font-weight: bold;
+    display: inline-block;
+    width: 10px;
+    text-align: center;
+}
+
+span.name {
+    margin: 10px;
+}
