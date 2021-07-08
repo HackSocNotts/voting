@@ -24,7 +24,9 @@
             <h2>What's your student ID?</h2>
             <input type="text" name="id" id="id" placeholder="12345678">
             <div id="error"></div>
-            <button class="register" onclick="register()">Register</button>
+            <div id="message"></div>
+            <button class="register" id="register" onclick="register()">Register</button>
+            <button class="ballot right hidden" id="ballot" onclick="openBallot()">Open Ballot &rightarrow;</button>
         </div>
     </div>
 </body>

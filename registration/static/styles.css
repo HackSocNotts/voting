@@ -55,8 +55,26 @@ div.form button:active {
     background-color: #008033;
 }
 
+div.form button:disabled {
+    background-color: #153d25;
+    cursor: not-allowed;
+}
+
+div.form button.right {
+    margin-right: 10px;
+}
+
 div.form div#error {
     color: rgb(204, 32, 32);
     font-size: 16pt;
     padding: 10px;
+}
+
+div.form div#message {
+    font-size: 16pt;
+}
+
+.hidden {
+    visibility: hidden;
+    display: none !important;
 }
