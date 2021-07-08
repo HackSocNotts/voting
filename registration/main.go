@@ -10,10 +10,13 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"hacksocnotts.co.uk/voting/common"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"github.com/google/uuid"
 )
 
 var db *mongo.Client
@@ -54,11 +57,11 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println("registering user", id)
+	log.Println("attempting to register user", id)
 	exists, err := verify(int(id))
 	if err != nil {
-		log.Printf("user %d: couldn't verify user against the database\n", id)
-		w.WriteHeader(http.StatusBadRequest)
+		log.Printf("user %d: couldn't verify user against the database. %s\n", id, err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintln(w, "There was a database error, please try again.")
 		return
 	}
@@ -69,6 +72,31 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "You don't appear to be a member of HackSoc. Are you sure you entered your ID correctly?")
 		return
 	}
+
+	votedAlready, err := hasVoted(int(id))
+	if err != nil {
+		log.Printf("user %d: couldn't check if they have already voted. %s\n", id, err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "There was a database error, please try again.")
+		return
+	}
+
+	if votedAlready {
+		log.Printf("user %d has already registered to vote\n", id)
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintln(w, "You've already registered a ballot! If this wasn't you, please contact the committee.")
+		return
+	}
+
+	ballotID, err := register(int(id))
+	if err != nil {
+		log.Printf("user %d: couldn't register a new document in the database. %s\n", id, err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "There was a database error, please try again.")
+		return
+	}
+
+	log.Printf("registered user %d, ballot id %s\n", id, ballotID)
 }
 
 func connect() (*mongo.Client, error) {
@@ -102,5 +130,25 @@ func verify(id int) (bool, error) {
 }
 
 func hasVoted(id int) (bool, error) {
+	var (
+		filter     = bson.D{{"studentid", id}}
+		collection = db.Database("Hacksoc").Collection("voting_reg")
+		n, err     = collection.CountDocuments(context.TODO(), filter)
+	)
 
+	return n > 0, err
+}
+
+func register(id int) (string, error) {
+	var (
+		ballotID = uuid.New()
+		reg      = common.VoterRegistration{
+			BallotID:  ballotID.String(),
+			StudentID: id,
+		}
+		collection = db.Database("Hacksoc").Collection("voting_reg")
+	)
+
+	_, err := collection.InsertOne(context.TODO(), reg)
+	return ballotID.String(), err
 }
