@@ -11,9 +11,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type VoterRegistration struct {
-	BallotID  string
+type MemberVoted struct {
 	StudentID int
+}
+
+type Ballot struct {
+	Votes map[string]([]string)
 }
 
 func Connect() (*mongo.Client, error) {

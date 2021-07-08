@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -11,9 +13,8 @@ import (
 	"hacksocnotts.co.uk/voting/common"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-
-	"github.com/google/uuid"
 )
 
 var db *mongo.Client
@@ -86,7 +87,9 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("registered user %d, ballot id %s\n", id, ballotID)
+	log.Printf("registered user %d\n", id)
+
+	fmt.Fprint(w, ballotID)
 }
 
 func verify(id int) (bool, error) {
@@ -102,7 +105,7 @@ func verify(id int) (bool, error) {
 func hasVoted(id int) (bool, error) {
 	var (
 		filter     = bson.D{{Key: "studentid", Value: id}}
-		collection = db.Database("Hacksoc").Collection("voting_reg")
+		collection = db.Database("Hacksoc").Collection("members_voted")
 		n, err     = collection.CountDocuments(context.TODO(), filter)
 	)
 
@@ -111,14 +114,24 @@ func hasVoted(id int) (bool, error) {
 
 func register(id int) (string, error) {
 	var (
-		ballotID = uuid.New()
-		reg      = common.VoterRegistration{
-			BallotID:  ballotID.String(),
-			StudentID: id,
-		}
-		collection = db.Database("Hacksoc").Collection("voting_reg")
+		membersVoted = db.Database("Hacksoc").Collection("members_voted")
+		ballots      = db.Database("Hacksoc").Collection("ballots")
 	)
 
-	_, err := collection.InsertOne(context.TODO(), reg)
-	return ballotID.String(), err
+	_, err := membersVoted.InsertOne(context.TODO(), common.MemberVoted{StudentID: id})
+	if err != nil {
+		return "", err
+	}
+
+	res, err := ballots.InsertOne(context.TODO(), common.Ballot{})
+	if err != nil {
+		return "", err
+	}
+
+	switch ballotID := res.InsertedID.(type) {
+	case primitive.ObjectID:
+		return ballotID.Hex(), nil
+	default:
+		return "", errors.New("unexpected error. ballot ID is not an ObjectID")
+	}
 }

@@ -9,6 +9,7 @@ function register() {
 
             if (this.status == 200) {
                 document.getElementById("error").innerHTML = ""
+                console.log(req.responseText)
             } else {
                 document.getElementById("error").innerHTML = req.responseText
             }
