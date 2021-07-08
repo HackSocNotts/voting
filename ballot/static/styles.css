@@ -89,7 +89,10 @@ div.form div#message {
 
 ul.choices {
     list-style: none;
-    padding-left: 10px;
+    padding-left: 0;
+    margin-left: 5px;
+    border: 3px solid transparent;
+    border-radius: 8px;
 }
 
 li.choice {
@@ -144,4 +147,12 @@ div.form button.clear {
     padding-right: 7px;
     font-weight: normal;
     width: auto;
+}
+
+ul.complete {
+    border-color: #008033;
+}
+
+ul.complete li {
+    border-color: #008033;
 }

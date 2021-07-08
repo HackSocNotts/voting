@@ -86,6 +86,10 @@ function selectCandidate(pos, candidate) {
 
     ballot[pos].push(candidate)
     document.getElementById("rank-" + pos + "-" + candidate).innerHTML = ballot[pos].length
+
+    if (ballot[pos].length == candidates[pos].candidates.length) {
+        document.getElementById("rank-" + pos + "-" + candidate).parentElement.parentElement.classList.add("complete")
+    }
 }
 
 function clearBallot(pos) {
@@ -94,4 +98,5 @@ function clearBallot(pos) {
     }
 
     ballot[pos] = []
+    document.getElementById("rank-" + pos + "-0").parentElement.parentElement.classList.remove("complete")
 }
