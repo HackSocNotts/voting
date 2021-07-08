@@ -29,6 +29,14 @@ div.form {
     padding: 20px;
 }
 
+div.form h2 {
+    margin-top: 0;
+}
+
+div.form section:first-child h2 {
+    margin-top: 0;
+}
+
 div.form input {
     width: 250px;
     padding: 10px;
@@ -125,4 +133,15 @@ span.rank {
 
 span.name {
     margin: 10px;
+    font-weight: bold;
+}
+
+div.form button.clear {
+    margin-right: 0;
+    font-size: 12pt;
+    padding: 5px;
+    padding-left: 7px;
+    padding-right: 7px;
+    font-weight: normal;
+    width: auto;
 }
