@@ -91,7 +91,7 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 
 func verify(id int) (bool, error) {
 	var (
-		filter     = bson.D{{"ID", id}}
+		filter     = bson.D{{Key: "ID", Value: id}}
 		collection = db.Database("Hacksoc").Collection("members")
 		n, err     = collection.CountDocuments(context.TODO(), filter)
 	)
@@ -101,7 +101,7 @@ func verify(id int) (bool, error) {
 
 func hasVoted(id int) (bool, error) {
 	var (
-		filter     = bson.D{{"studentid", id}}
+		filter     = bson.D{{Key: "studentid", Value: id}}
 		collection = db.Database("Hacksoc").Collection("voting_reg")
 		n, err     = collection.CountDocuments(context.TODO(), filter)
 	)
