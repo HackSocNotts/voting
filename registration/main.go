@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -42,16 +41,14 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Println("error reading /register req. body:", err)
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintln(w, "An unexpected error occurred")
+		common.Error(w, http.StatusBadRequest, "An unexpected error occurred")
 		return
 	}
 
 	id, err := strconv.ParseInt(string(body), 10, 32)
 	if err != nil {
 		log.Println("error parsing given id:", string(body))
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintln(w, "Invalid ID format")
+		common.Error(w, http.StatusBadRequest, "Invalid ID format. This shouldn't happen, please contact the committee.")
 		return
 	}
 
@@ -59,38 +56,33 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 	exists, err := verify(int(id))
 	if err != nil {
 		log.Printf("user %d: couldn't verify user against the database. %s\n", id, err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintln(w, "There was a database error, please try again.")
+		common.Error(w, http.StatusInternalServerError, "There was a database error, please try again.")
 		return
 	}
 
 	if !exists {
 		log.Printf("user %d attempted to register but isn't in HackSoc\n", id)
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintln(w, "You don't appear to be a member of HackSoc. Are you sure you entered your ID correctly?")
+		common.Error(w, http.StatusBadRequest, "You don't appear to be a member of HackSoc. Are you sure you entered your ID correctly?")
 		return
 	}
 
 	votedAlready, err := hasVoted(int(id))
 	if err != nil {
 		log.Printf("user %d: couldn't check if they have already voted. %s\n", id, err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "There was a database error, please try again.")
+		common.Error(w, http.StatusInternalServerError, "There was a database error, please try again.")
 		return
 	}
 
 	if votedAlready {
 		log.Printf("user %d has already registered to vote\n", id)
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintln(w, "You've already registered a ballot! If this wasn't you, please contact the committee.")
+		common.Error(w, http.StatusBadRequest, "You've already registered a ballot! If this wasn't you, please contact the committee.")
 		return
 	}
 
 	ballotID, err := register(int(id))
 	if err != nil {
 		log.Printf("user %d: couldn't register a new document in the database. %s\n", id, err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "There was a database error, please try again.")
+		common.Error(w, http.StatusInternalServerError, "There was a database error, please try again.")
 		return
 	}
 

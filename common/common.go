@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -33,4 +34,9 @@ func Connect() (*mongo.Client, error) {
 	err = client.Ping(context.TODO(), nil)
 
 	return client, err
+}
+
+func Error(w http.ResponseWriter, status int, msg string, args ...interface{}) {
+	w.WriteHeader(status)
+	fmt.Fprintf(w, msg, args...)
 }
