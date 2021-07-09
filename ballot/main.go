@@ -17,7 +17,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var db *mongo.Client
+var (
+	db         *mongo.Client
+	candidates []Position
+)
 
 type Position struct {
 	Index      int      `json:"index"`
@@ -38,6 +41,10 @@ func main() {
 		log.Fatal("could not connect to the database.", err)
 	}
 
+	if err = loadCandidates(); err != nil {
+		log.Fatal("could not fetch candidate list.", err)
+	}
+
 	r := mux.NewRouter()
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
 	r.Path("/candidates/").HandlerFunc(handleCandidates)
@@ -52,21 +59,7 @@ func main() {
 }
 
 func handleCandidates(w http.ResponseWriter, r *http.Request) {
-	var (
-		collection  = db.Database("Hacksoc").Collection("candidates")
-		opts        = options.Find().SetSort(bson.D{{Key: "index", Value: 1}})
-		cursor, err = collection.Find(context.TODO(), bson.D{}, opts)
-		results     []Position
-	)
-
-	if err != nil {
-		common.Error(w, http.StatusInternalServerError, "There was a database error, please try again.")
-		return
-	}
-
-	cursor.All(context.TODO(), &results)
-
-	res, err := json.Marshal(results)
+	res, err := json.Marshal(candidates)
 	if err != nil {
 		common.Error(w, http.StatusInternalServerError, "There was an unexpected error, please try again.")
 		return
@@ -118,6 +111,12 @@ func handleSubmit(w http.ResponseWriter, r *http.Request) {
 
 	json.Unmarshal(body, &ballot)
 
+	if !allCandidatesRanked(ballot.Ballot) {
+		log.Println("incomplete ballot submitted")
+		common.Error(w, http.StatusBadRequest, "You must rank every candidate to vote.")
+		return
+	}
+
 	collection := db.Database("Hacksoc").Collection("ballots")
 	id, err := primitive.ObjectIDFromHex(ballot.ID)
 	if err != nil {
@@ -149,4 +148,35 @@ func handleSubmit(w http.ResponseWriter, r *http.Request) {
 		common.Error(w, http.StatusInternalServerError, "There was an error recording your ballot in the database, please try again.")
 		return
 	}
+}
+
+func loadCandidates() error {
+	var (
+		collection  = db.Database("Hacksoc").Collection("candidates")
+		opts        = options.Find().SetSort(bson.D{{Key: "index", Value: 1}})
+		cursor, err = collection.Find(context.TODO(), bson.D{}, opts)
+	)
+
+	if err != nil {
+		return err
+	}
+
+	cursor.All(context.TODO(), &candidates)
+
+	return nil
+}
+
+func allCandidatesRanked(ballot common.Ballot) bool {
+	for i, pos := range candidates {
+		ranking, ok := (*ballot.Votes)[i]
+		if !ok {
+			return false
+		}
+
+		if len(pos.Candidates) != len(ranking) {
+			return false
+		}
+	}
+
+	return true
 }
