@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -40,6 +41,7 @@ func main() {
 	r := mux.NewRouter()
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
 	r.Path("/candidates/").HandlerFunc(handleCandidates)
+	r.PathPrefix("/active/").HandlerFunc(handleActive)
 	r.Path("/submit/").Methods("POST").HandlerFunc(handleSubmit)
 	r.Path("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./static/index.html")
@@ -71,6 +73,37 @@ func handleCandidates(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write(res)
+}
+
+func handleActive(w http.ResponseWriter, r *http.Request) {
+	var (
+		id       = r.URL.Query().Get("id")
+		oid, err = primitive.ObjectIDFromHex(id)
+	)
+
+	if err != nil {
+		log.Println("invalid id", id)
+		common.Error(w, http.StatusBadRequest, "Your ballot ID doesn't seem to be in the correct format.")
+		return
+	}
+
+	collection := db.Database("Hacksoc").Collection("ballots")
+	res := collection.FindOne(context.TODO(), bson.D{{Key: "_id", Value: oid}})
+
+	if res.Err() == mongo.ErrNoDocuments {
+		fmt.Fprintf(w, "false")
+		return
+	}
+
+	var ballot common.Ballot
+
+	if err = res.Decode(&ballot); err != nil {
+		log.Println("couldn't check for existence of ballot", id)
+		common.Error(w, http.StatusInternalServerError, "There was a database error, please try again.")
+		return
+	}
+
+	fmt.Fprintf(w, "%t", ballot.Votes == nil)
 }
 
 func handleSubmit(w http.ResponseWriter, r *http.Request) {

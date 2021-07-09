@@ -2,7 +2,15 @@ var candidates, ballot, ballotID
 
 function load() {
     ballotID = new URLSearchParams(location.search).get("id")
-    getCandidates()
+
+    isBallotActive(function() {
+        getCandidates()
+    }, function() {
+        var err = document.createElement("div")
+        err.id = "error"
+        err.innerHTML = "Either you've already voted, or no ballot with this ID exists.<br><br>If this is a mistake, please contact the committee."
+        document.getElementById("form").appendChild(err)
+    })
 }
 
 function getCandidates() {
@@ -133,4 +141,26 @@ function submitBallot() {
             "votes": ballot,
         }
     }))
+}
+
+function isBallotActive(onActive, onInactive) {
+    var req = new XMLHttpRequest()
+
+    req.onreadystatechange = function() {
+        if (this.readyState != 4) return
+
+        if (this.status == 200) {
+            var active = JSON.parse(req.responseText)
+            if (active) {
+                onActive()
+            } else {
+                onInactive()
+            }
+        } else {
+            // handle error
+        }
+    }
+
+    req.open("GET", "/active/" + location.search)
+    req.send()
 }
