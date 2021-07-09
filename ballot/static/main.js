@@ -19,7 +19,7 @@ function getCandidates() {
             }
             renderForm()
         } else {
-            // TODO: handle error
+            console.error(req.responseText)
         }
     }
 
@@ -79,6 +79,10 @@ function renderForm() {
         document.getElementById("form").appendChild(section)
     }
 
+    var err = document.createElement("div")
+    err.id = "error"
+    document.getElementById("form").appendChild(err)
+
     var submit = document.createElement("button")
     submit.innerHTML = "Submit Ballot"
     submit.classList.add("submit")
@@ -115,9 +119,9 @@ function submitBallot() {
         if (this.readyState != 4) return
 
         if (this.status == 200) {
-            
+            document.getElementById("error").innerHTML = ""
         } else {
-            // TODO: handle error
+            document.getElementById("error").innerHTML = req.responseText
         }
     }
 
