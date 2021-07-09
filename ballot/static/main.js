@@ -1,6 +1,7 @@
-var candidates, ballot
+var candidates, ballot, ballotID
 
 function load() {
+    ballotID = new URLSearchParams(location.search).get("id")
     getCandidates()
 }
 
@@ -77,6 +78,12 @@ function renderForm() {
 
         document.getElementById("form").appendChild(section)
     }
+
+    var submit = document.createElement("button")
+    submit.innerHTML = "Submit Ballot"
+    submit.classList.add("submit")
+    submit.onclick = submitBallot
+    document.getElementById("form").appendChild(submit)
 }
 
 function selectCandidate(pos, candidate) {
@@ -99,4 +106,27 @@ function clearBallot(pos) {
 
     ballot[pos] = []
     document.getElementById("rank-" + pos + "-0").parentElement.parentElement.classList.remove("complete")
+}
+
+function submitBallot() {
+    var req = new XMLHttpRequest()
+
+    req.onreadystatechange = function() {
+        if (this.readyState != 4) return
+
+        if (this.status == 200) {
+            
+        } else {
+            // TODO: handle error
+        }
+    }
+
+    req.open("POST", "/submit/")
+
+    req.send(JSON.stringify({
+        "id": ballotID,
+        "ballot": {
+            "votes": ballot,
+        }
+    }))
 }

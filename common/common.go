@@ -16,7 +16,7 @@ type MemberVoted struct {
 }
 
 type Ballot struct {
-	Votes map[string]([]string)
+	Votes *map[int]([]int) `json:"votes"`
 }
 
 func Connect() (*mongo.Client, error) {

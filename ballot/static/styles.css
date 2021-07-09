@@ -72,6 +72,10 @@ div.form button.right {
     margin-right: 10px;
 }
 
+div.form button.submit {
+    margin-top: 20px;
+}
+
 div.form div#error {
     color: rgb(204, 32, 32);
     font-size: 16pt;
@@ -91,6 +95,7 @@ ul.choices {
     list-style: none;
     padding-left: 0;
     margin-left: 5px;
+    margin-bottom: 5px;
     border: 3px solid transparent;
     border-radius: 8px;
 }
@@ -142,17 +147,19 @@ span.name {
 div.form button.clear {
     margin-right: 0;
     font-size: 12pt;
-    padding: 5px;
-    padding-left: 7px;
-    padding-right: 7px;
     font-weight: normal;
+    padding: 0;
+    margin-top: 0;
+    margin-right: 5px;
     width: auto;
+    background: none;
+    color: rgb(102, 77, 77);
 }
 
 ul.complete {
-    border-color: #008033;
+    border-color: #00953b;
 }
 
 ul.complete li {
-    border-color: #008033;
+    border-color: #00953b;
 }
