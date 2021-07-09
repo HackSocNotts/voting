@@ -13,6 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var db *mongo.Client
@@ -51,7 +52,8 @@ func main() {
 func handleCandidates(w http.ResponseWriter, r *http.Request) {
 	var (
 		collection  = db.Database("Hacksoc").Collection("candidates")
-		cursor, err = collection.Find(context.TODO(), bson.D{})
+		opts        = options.Find().SetSort(bson.D{{Key: "index", Value: 1}})
+		cursor, err = collection.Find(context.TODO(), bson.D{}, opts)
 		results     []Position
 	)
 
