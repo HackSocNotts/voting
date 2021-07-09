@@ -95,6 +95,8 @@ function renderForm() {
     submit.innerHTML = "Submit Ballot"
     submit.classList.add("submit")
     submit.onclick = submitBallot
+    submit.id = "submit"
+    submit.setAttribute("disabled", true)
     document.getElementById("form").appendChild(submit)
 }
 
@@ -107,7 +109,14 @@ function selectCandidate(pos, candidate) {
     document.getElementById("rank-" + pos + "-" + candidate).innerHTML = ballot[pos].length
 
     if (ballot[pos].length == candidates[pos].candidates.length) {
-        document.getElementById("rank-" + pos + "-" + candidate).parentElement.parentElement.classList.add("complete")
+        document.getElementById("rank-" + pos + "-" + candidate).parentElement.parentElement.
+        classList.add("complete")
+    }
+
+    if (isBallotComplete()) {
+        document.getElementById("submit").removeAttribute("disabled")
+    } else {
+        document.getElementById("submit").setAttribute("disabled", true)
     }
 }
 
@@ -163,4 +172,15 @@ function isBallotActive(onActive, onInactive) {
 
     req.open("GET", "/active/" + location.search)
     req.send()
+}
+
+function isBallotComplete() {
+    for (var i of Object.keys(ballot)) {
+        var ranking = ballot[i]
+        if (ranking.length != candidates[i].candidates.length) {
+            return false
+        }
+    }
+
+    return true
 }
