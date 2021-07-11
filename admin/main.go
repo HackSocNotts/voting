@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"math"
 	"net/http"
@@ -16,6 +17,12 @@ import (
 
 var db *mongo.Client
 
+type Results struct {
+	Winners    map[string]string `json:"winners"`
+	NumBallots int               `json:"num_ballots"`
+	NumVotes   int               `json:"num_votes"`
+}
+
 func main() {
 	var err error
 
@@ -26,12 +33,54 @@ func main() {
 
 	r := mux.NewRouter()
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
+	r.PathPrefix("/results").HandlerFunc(handleResults)
 	r.Path("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./static/index.html")
 	})
 
 	log.Println("starting admin control panel server on :10002")
 	log.Fatal(http.ListenAndServe(":10002", r))
+}
+
+func handleResults(w http.ResponseWriter, r *http.Request) {
+	ballots, err := getBallots()
+	if err != nil {
+		log.Println("there was an error receiving the ballots.", err)
+		common.Error(w, http.StatusInternalServerError, "There was a database error, please try again.")
+		return
+	}
+
+	candidates, err := getCandidates()
+	if err != nil {
+		log.Println("there was an error receiving the candidates.", err)
+		common.Error(w, http.StatusInternalServerError, "There was a database error, please try again.")
+		return
+	}
+
+	res := &Results{
+		Winners:    make(map[string]string),
+		NumBallots: len(ballots),
+		NumVotes:   0,
+	}
+
+	for _, b := range ballots {
+		if b.Votes != nil {
+			res.NumVotes++
+		}
+	}
+
+	for i, pos := range candidates {
+		winner := calculateWinner(i, ballots)
+		res.Winners[pos.Role] = pos.Candidates[winner]
+	}
+
+	resp, err := json.Marshal(res)
+	if err != nil {
+		common.Error(w, http.StatusInternalServerError, "There was an unexpected error, please try again.")
+		return
+	}
+
+	w.Write(resp)
 }
 
 func calculateWinner(pos int, ballots []common.Ballot) int {

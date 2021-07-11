@@ -9,7 +9,7 @@ body {
 
 header {
     background-color: #00953b;
-    padding: 20px;
+    padding: 40px;
 }
 
 header h1, header h2 {
@@ -35,4 +35,57 @@ div.results {
     display: grid;
     grid-template-columns: 50% 50%;
     column-gap: 20px;
+}
+
+div.results h1 {
+    font-size: 27pt;
+}
+
+div.results ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+ul#winners h2 {
+    color: #00953b;
+    margin-bottom: 0;
+}
+
+ul#winners span {
+    font-weight: bold;
+    font-size: 13pt;
+}
+
+span.stat, span.value {
+    font-weight: bold;
+    font-size: 14pt;
+}
+
+span.value {
+    color: #00953b;
+}
+
+button {
+    display: block;
+    width: 200px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
+    font-size: 20pt;
+    padding: 10px;
+    background-color: #00953b;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:active {
+    background-color: #008033;
+}
+
+button:disabled {
+    background-color: #153d25;
+    cursor: not-allowed;
 }

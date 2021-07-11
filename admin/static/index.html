@@ -7,19 +7,30 @@
     <title>HackSoc Voting Admin</title>
 
     <link rel="stylesheet" href="static/styles.css">
+    <script src="/static/main.js"></script>
 </head>
-<body>
+<body onload="refresh()">
     <header>
         <h1>HackSoc</h1>
         <h2>Voting Results</h2>
     </header>
     <div class="results">
         <div class="left">
-            <h1>Results</h1>
+            <h1>Winners</h1>
+            <ul id="winners"></ul>
         </div>
         <div class="right">
             <h1>Stats</h1>
+            <ul>
+                <li>
+                    <span class="stat">Total Votes:</span> <span class="value" id="votes"></span>
+                </li>
+                <li>
+                    <span class="stat">Total Ballots:</span> <span class="value" id="ballots"></span>
+                </li>
+            </ul>
         </div>
     </div>
+    <button onclick="refresh()">Refresh</button>
 </body>
 </html>
