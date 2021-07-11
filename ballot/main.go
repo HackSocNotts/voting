@@ -19,14 +19,8 @@ import (
 
 var (
 	db         *mongo.Client
-	candidates []Position
+	candidates []common.Position
 )
-
-type Position struct {
-	Index      int      `json:"index"`
-	Role       string   `json:"role"`
-	Candidates []string `json:"candidates"`
-}
 
 type BallotRequest struct {
 	Ballot common.Ballot `json:"ballot"`

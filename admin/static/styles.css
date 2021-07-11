@@ -31,7 +31,7 @@ div.results {
     margin-left: auto;
     margin-right: auto;
     margin-top: 50px;
-    width: 600px;
+    width: 700px;
     display: grid;
     grid-template-columns: 50% 50%;
     column-gap: 20px;

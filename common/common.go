@@ -19,6 +19,12 @@ type Ballot struct {
 	Votes *map[int]([]int) `json:"votes"`
 }
 
+type Position struct {
+	Index      int      `json:"index"`
+	Role       string   `json:"role"`
+	Candidates []string `json:"candidates"`
+}
+
 func Connect() (*mongo.Client, error) {
 	var (
 		username = os.Getenv("MONGO_USER")
