@@ -1,0 +1,38 @@
+* {
+    color: #0c0c0c;
+    font-family: "Lato", "Helvetica Neue", "Helvetica", sans-serif;
+}
+
+body {
+    margin: 0;
+}
+
+header {
+    background-color: #00953b;
+    padding: 20px;
+}
+
+header h1, header h2 {
+    color: white;
+    font-weight: bold;
+    margin: 0;
+}
+
+header h1 {
+    font-size: 40pt;
+}
+
+.hidden {
+    visibility: hidden;
+    display: none !important;
+}
+
+div.results {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
+    width: 600px;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    column-gap: 20px;
+}
