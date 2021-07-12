@@ -1,6 +1,6 @@
 # Voting
 
-This is the voting system for HackSoc committee elections. It uses single transferrable vote (or more specifically, instant-runoff voting, which is the single-winner equivalent of STV), and is designed so that nobody can possible detect who cast which ballot.
+This is the voting system for HackSoc committee elections. It uses single transferrable vote (or more specifically, instant-runoff voting, which is the single-winner equivalent of STV), and is designed so that nobody can possibly detect who cast which ballot.
 
 It is made of three web servers. Two are user-facing and the third is an admin panel for us to check the winners.
 
