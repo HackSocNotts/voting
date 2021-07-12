@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "admin"
+		},
+		{
+			"path": "."
 		}
 	],
 	"settings": {}
