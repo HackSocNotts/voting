@@ -141,33 +141,6 @@ func findLoser(m [][]int) int {
 	return loser
 }
 
-// counts the amount of votes of each candidate for each position.
-// if x is the return value, x[i][j] is the amount of votes of candidate #j in position #i
-func countVotes(ballots []common.Ballot) [][]int {
-	var (
-		res [][]int
-	)
-
-	for _, b := range ballots {
-		if b.Votes == nil {
-			continue
-		}
-
-		if len(res) == 0 {
-			res = make([][]int, len(*b.Votes))
-			for i, v := range *b.Votes {
-				res[i] = make([]int, len(v))
-			}
-		}
-
-		for i, v := range *b.Votes {
-			res[i][v[0]]++
-		}
-	}
-
-	return res
-}
-
 func getBallots() ([]common.Ballot, error) {
 	var (
 		collection  = db.Database("Hacksoc").Collection("ballots")
