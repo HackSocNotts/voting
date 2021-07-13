@@ -137,7 +137,10 @@ function submitBallot() {
 
         if (this.status == 200) {
             document.getElementById("error").innerHTML = ""
-            window.location.pathname = "/thank-you"
+            var url = new URL(window.location.href)
+            url.search = ""
+            url.pathname = "/thank-you"
+            window.location = url
         } else {
             document.getElementById("error").innerHTML = req.responseText
         }
