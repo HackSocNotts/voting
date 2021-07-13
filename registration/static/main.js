@@ -1,3 +1,5 @@
+var ballotID
+
 function register() {
     var id = document.getElementById("id").value
 
@@ -18,6 +20,7 @@ function register() {
                 document.getElementById("ballot").classList.remove("hidden")
 
                 document.getElementById("message").innerHTML = "Your ballot has been created. Click the button below to cast your votes."
+                ballotID = req.responseText
             } else {
                 document.getElementById("error").innerHTML = req.responseText
             }
@@ -33,5 +36,10 @@ function register() {
 }
 
 function openBallot() {
-    // this will go to the URL for the ballot
+    if (ballotID != undefined) {
+        var url = new URL(window.location.href)
+        url.pathname = "/ballot/"
+        url.searchParams.set("id", ballotID)
+        window.location = url
+    }
 }
