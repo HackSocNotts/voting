@@ -42,7 +42,7 @@ func main() {
 	r := mux.NewRouter()
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
 	r.Path("/candidates/").HandlerFunc(handleCandidates)
-	r.PathPrefix("/active/").HandlerFunc(handleActive)
+	r.Path("/active/{id}/").HandlerFunc(handleActive)
 	r.Path("/submit/").Methods("POST").HandlerFunc(handleSubmit)
 	r.Path("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./static/index.html")
@@ -64,13 +64,13 @@ func handleCandidates(w http.ResponseWriter, r *http.Request) {
 
 func handleActive(w http.ResponseWriter, r *http.Request) {
 	var (
-		id       = r.URL.Query().Get("id")
+		id       = mux.Vars(r)["id"]
 		oid, err = primitive.ObjectIDFromHex(id)
 	)
 
 	if err != nil {
 		log.Println("invalid id", id)
-		common.Error(w, http.StatusBadRequest, "Your ballot ID doesn't seem to be in the correct format.")
+		common.Error(w, http.StatusBadRequest, "Your ballot ID (%s) doesn't seem to be in the correct format.", id)
 		return
 	}
 

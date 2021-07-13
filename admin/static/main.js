@@ -12,7 +12,7 @@ function refresh() {
         }
     }
 
-    req.open("GET", "/results")
+    req.open("GET", "./results")
     req.send()
 }
 

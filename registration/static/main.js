@@ -23,7 +23,7 @@ function register() {
             }
         }
 
-        req.open("POST", "/register/")
+        req.open("POST", "./register/")
         req.send(id)
 
         document.getElementById("register").innerHTML = "Registering"

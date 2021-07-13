@@ -31,7 +31,7 @@ function getCandidates() {
         }
     }
 
-    req.open("GET", "/candidates/")
+    req.open("GET", "./candidates/")
     req.send()
 }
 
@@ -142,7 +142,7 @@ function submitBallot() {
         }
     }
 
-    req.open("POST", "/submit/")
+    req.open("POST", "./submit/")
 
     req.send(JSON.stringify({
         "id": ballotID,
@@ -170,7 +170,7 @@ function isBallotActive(onActive, onInactive) {
         }
     }
 
-    req.open("GET", "/active/" + location.search)
+    req.open("GET", "./active/" + (new URLSearchParams(location.search)).get("id") + "/")
     req.send()
 }
 
