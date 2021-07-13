@@ -84,12 +84,16 @@ func handleResults(w http.ResponseWriter, r *http.Request) {
 }
 
 func calculateWinner(pos int, ballots []common.Ballot) int {
-	matrix := make([][]int, len(ballots))
-	for i, b := range ballots {
-		matrix[i] = (*b.Votes)[pos]
+	votes := numVotes(ballots)
+	matrix := make([][]int, 0, votes)
+
+	for _, b := range ballots {
+		if b.Votes != nil {
+			matrix = append(matrix, (*b.Votes)[pos])
+		}
 	}
 
-	if len(ballots) == 0 {
+	if votes == 0 {
 		return -1
 	}
 
@@ -195,4 +199,16 @@ func getCandidates() ([]common.Position, error) {
 	cursor.All(context.TODO(), &candidates)
 
 	return candidates, nil
+}
+
+func numVotes(ballots []common.Ballot) int {
+	n := 0
+
+	for _, b := range ballots {
+		if b.Votes != nil {
+			n++
+		}
+	}
+
+	return n
 }
