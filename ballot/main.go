@@ -47,6 +47,9 @@ func main() {
 	r.Path("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./static/index.html")
 	})
+	r.Path("/thank-you").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./static/thankyou.html")
+	})
 
 	log.Println("starting ballot server on :10001")
 	log.Fatal(http.ListenAndServe(":10001", r))
