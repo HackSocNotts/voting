@@ -139,7 +139,7 @@ function submitBallot() {
             document.getElementById("error").innerHTML = ""
             var url = new URL(window.location.href)
             url.search = ""
-            url.pathname = "/thank-you"
+            url.pathname = url.pathname + "/thank-you"
             window.location = url
         } else {
             document.getElementById("error").innerHTML = req.responseText
