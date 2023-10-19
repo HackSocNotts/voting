@@ -4,35 +4,21 @@ services:
       args:
         - target=registration
       dockerfile: "Dockerfile"
-    environment:
-      - MONGO_USER=brucebernard
-      - MONGO_PASS=admin
-      - MONGO_HOST=db
+    env_file: ".env"
   ballot:
     build:
       args:
         - target=ballot
       dockerfile: "Dockerfile"
-    environment:
-      - MONGO_USER=brucebernard
-      - MONGO_PASS=admin
-      - MONGO_HOST=db
+    env_file: ".env"
   admin:
     build:
       args:
         - target=admin
       dockerfile: "Dockerfile"
-    environment:
-      - MONGO_USER=brucebernard
-      - MONGO_PASS=admin
-      - MONGO_HOST=db
+    env_file: ".env"
   revproxy:
+    ports:
+      - 8000:80
     build:
       dockerfile: Dockerfile.nginx
-  db:
-    build:
-      dockerfile: Dockerfile.db
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: brucebernard
-      MONGO_INITDB_ROOT_PASSWORD: admin
-      MONGO_INITDB_DATABASE: hacksoc

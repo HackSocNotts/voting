@@ -29,10 +29,9 @@ func Connect() (*mongo.Client, error) {
 	var (
 		username = os.Getenv("MONGO_USER")
 		password = os.Getenv("MONGO_PASS")
-		host = os.Getenv("MONGO_HOST")
 	)
 
-	opts := options.Client().ApplyURI(fmt.Sprintf("mongodb://%s:%s@%s:27017/hacksoc?retryWrites=true&w=majority", username, password, host))
+	opts := options.Client().ApplyURI(fmt.Sprintf("mongodb+srv://%s:%s@cluster0.q5uor.mongodb.net/hacksoc?retryWrites=true&w=majority", username, password))
 
 	log.Println("connecting to mongodb database...")
 	client, err := mongo.Connect(context.TODO(), opts)

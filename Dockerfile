@@ -1,3 +1,5 @@
+ARG target
+
 FROM golang:alpine as builder
 ARG target
 
@@ -17,9 +19,11 @@ ADD common/. common/.
 RUN go build -C ${target} -o /build/a.out
 
 FROM alpine:latest
+ARG target
 
 WORKDIR /app
 
 COPY --from=builder /build/a.out ./a.out
+COPY --from=builder /build/${target}/static/  ./static/
 
 CMD [ "./a.out" ]

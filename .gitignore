@@ -8,3 +8,4 @@ tramp
 .\#*
 
 .DS_Store
+.env
