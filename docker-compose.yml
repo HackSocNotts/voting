@@ -19,6 +19,6 @@ services:
     env_file: ".env"
   revproxy:
     ports:
-      - 8000:80
+      - 80:8000
     build:
       dockerfile: Dockerfile.nginx
