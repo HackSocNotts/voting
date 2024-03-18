@@ -14,7 +14,7 @@ A few things need to be in place to run an election.
 
  - Each of the three servers should be running separately, ideally on different machines. The registration, ballot, and admin servers run on ports `:10000`, `:10001`, and `:10002` respectively.
  - A reverse proxy should be set up so that the three servers can be accessed at `/register`, `/ballot`, and `/admin`.
- - The MongoDB database credentials need to be provided as environment variables `MONGO_USER` and `MONGO_PASS`.
+ - The MongoDB database credentials and URL need to be provided as environment variables `MONGO_USER`, `MONGO_PASS`, and `MONGO_URL`.
    - There should be one database, "Hacksoc", with four collections, `members`, `ballots`, `candidates`, and `members_voted`.
    - `members` should be a collection of all members with at least an `ID` field for the student ID.
    - `candidates` should be a collection of all committee positions to fill, e.g.
