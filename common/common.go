@@ -32,7 +32,7 @@ func Connect() (*mongo.Client, error) {
 		url      = os.Getenv("MONGO_URL")
 	)
 
-	opts := options.Client().ApplyURI(fmt.Sprintf("mongodb+srv://%s:%s@%s/hacksoc?retryWrites=true&w=majority", username, password, url))
+	opts := options.Client().ApplyURI(fmt.Sprintf("mongodb://%s:%s@%s/hacksoc?retryWrites=true&w=majority", username, password, url))
 
 	log.Println("connecting to mongodb database...")
 	client, err := mongo.Connect(context.TODO(), opts)
