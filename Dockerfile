@@ -23,4 +23,4 @@ EXPOSE 10000
 EXPOSE 10001
 EXPOSE 10002
 
-CMD ["sh", "-c", "/admin & /ballot & /registration"]
+CMD ["sh", "-c", "/admin & /ballot & /registration & wait"]
