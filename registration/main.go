@@ -28,9 +28,9 @@ func main() {
 	}
 
 	r := mux.NewRouter()
-	r.PathPrefix("/register/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
-	r.Path("/register/register/").Methods("POST").HandlerFunc(registerHandler)
-	r.Path("/register").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
+	r.Path("/register/").Methods("POST").HandlerFunc(registerHandler)
+	r.Path("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./static/index.html")
 	})
 

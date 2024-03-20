@@ -40,14 +40,14 @@ func main() {
 	}
 
 	r := mux.NewRouter()
-	r.PathPrefix("/ballot/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
-	r.Path("/ballot/candidates/").HandlerFunc(handleCandidates)
-	r.Path("/ballot/active/{id}/").HandlerFunc(handleActive)
-	r.Path("/ballot/submit/").Methods("POST").HandlerFunc(handleSubmit)
-	r.Path("/ballot").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
+	r.Path("/candidates/").HandlerFunc(handleCandidates)
+	r.Path("/active/{id}/").HandlerFunc(handleActive)
+	r.Path("/submit/").Methods("POST").HandlerFunc(handleSubmit)
+	r.Path("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./static/index.html")
 	})
-	r.Path("/ballot/thank-you").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	r.Path("/thank-you").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./static/thankyou.html")
 	})
 
