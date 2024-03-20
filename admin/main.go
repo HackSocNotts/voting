@@ -32,9 +32,9 @@ func main() {
 	}
 
 	r := mux.NewRouter()
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
-	r.PathPrefix("/results").HandlerFunc(handleResults)
-	r.Path("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	r.PathPrefix("/admin/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
+	r.PathPrefix("/admin/results").HandlerFunc(handleResults)
+	r.Path("/admin").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./static/index.html")
 	})
 
