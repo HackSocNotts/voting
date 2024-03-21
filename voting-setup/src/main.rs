@@ -1,5 +1,5 @@
 use clap::Parser;
-use libsums::client::SumsClient;
+use libsums::{client::SumsClient, member};
 use mongodb::{
     bson::{doc, Document},
     options::ClientOptions,
@@ -64,9 +64,11 @@ async fn main() {
     println!("Getting member list...");
 
     let members = sums_client.members().await.expect("Failed to get members!");
-    let member_bson = members
+    let student_ids = members
         .iter()
-        .map(|member| doc! { "ID": &member.student_id });
+        .filter_map(|member| member.student_id.parse::<u32>().ok());
+
+    let member_bson = student_ids.map(|student_id| doc! { "ID": student_id });
 
     members_collection
         .drop(None)
