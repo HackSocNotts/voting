@@ -27,8 +27,8 @@ func main() {
 		log.Fatal("could not connect to the database.", err)
 	}
 
-	r := mux.NewRouter()
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
+	r := mux.NewRouter().PathPrefix("/register").Subrouter()
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/register/static/", http.FileServer(http.Dir("./static/"))))
 	r.Path("/register/").Methods("POST").HandlerFunc(registerHandler)
 	r.Path("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./static/index.html")

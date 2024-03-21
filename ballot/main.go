@@ -39,8 +39,8 @@ func main() {
 		log.Fatal("could not fetch candidate list.", err)
 	}
 
-	r := mux.NewRouter()
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
+	r := mux.NewRouter().PathPrefix("/ballot").Subrouter()
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/ballot/static/", http.FileServer(http.Dir("./static/"))))
 	r.Path("/candidates/").HandlerFunc(handleCandidates)
 	r.Path("/active/{id}/").HandlerFunc(handleActive)
 	r.Path("/submit/").Methods("POST").HandlerFunc(handleSubmit)
