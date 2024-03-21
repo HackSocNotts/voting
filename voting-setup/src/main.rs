@@ -54,10 +54,14 @@ async fn main() {
         .await
         .expect("Failed to create SUMS client!");
 
+    println!("Authenticating to SUMS...");
+
     sums_client
         .authenticate(args.sums_username, args.sums_password)
         .await
         .expect("Failed to authenticate with SUMS!");
+
+    println!("Getting member list...");
 
     let members = sums_client.members().await.expect("Failed to get members!");
     let member_bson = members
